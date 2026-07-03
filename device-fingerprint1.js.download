@@ -1,0 +1,508 @@
+
+var DeviceFingerprint = (function() {
+    'use strict';
+    
+    /**
+     * 收集设备信息
+     */
+    function collectDeviceInfo() {
+        var info = {
+            // 浏览器信息
+            userAgent: navigator.userAgent || '',
+            language: navigator.language || navigator.userLanguage || '',
+            languages: (navigator.languages || []).join(','),
+            platform: navigator.platform || '',
+            hardwareConcurrency: navigator.hardwareConcurrency || 0,
+            deviceMemory: navigator.deviceMemory || 0,
+            
+            // 设备型号信息
+            deviceModel: getDeviceModel(),
+            deviceBrand: getDeviceBrand(),
+            deviceType: getDeviceType(),
+            
+            // 屏幕信息
+            screenWidth: screen.width || 0,
+            screenHeight: screen.height || 0,
+            screenColorDepth: screen.colorDepth || 0,
+            screenPixelDepth: screen.pixelDepth || 0,
+            availWidth: screen.availWidth || 0,
+            availHeight: screen.availHeight || 0,
+            
+            // 时区信息
+            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || '',
+            timezoneOffset: new Date().getTimezoneOffset() || 0,
+            
+            // Canvas指纹
+            canvas: getCanvasFingerprint(),
+            
+            // WebGL指纹
+            webgl: getWebGLFingerprint(),
+            
+            // 音频指纹
+            audio: getAudioFingerprint(),
+            
+            // 字体检测
+            fonts: getInstalledFonts(),
+            
+            // 插件信息
+            plugins: getPlugins(),
+            
+            // 触摸支持
+            touchSupport: getTouchSupport(),
+            
+            // Cookie启用状态
+            cookieEnabled: navigator.cookieEnabled || false,
+            
+            // Do Not Track
+            doNotTrack: navigator.doNotTrack || '',
+            
+            // 存储信息
+            localStorage: isLocalStorageAvailable(),
+            sessionStorage: isSessionStorageAvailable(),
+            indexedDB: !!window.indexedDB,
+            
+            // 媒体设备
+            mediaDevices: getMediaDevices()
+        };
+        
+        return info;
+    }
+    
+    /**
+     * Canvas指纹
+     */
+    function getCanvasFingerprint() {
+        try {
+            var canvas = document.createElement('canvas');
+            var ctx = canvas.getContext('2d');
+            var text = '防薅羊毛设备指纹,Canvas@2024';
+            
+            ctx.textBaseline = 'top';
+            ctx.font = '14px Arial';
+            ctx.textBaseline = 'alphabetic';
+            ctx.fillStyle = '#f60';
+            ctx.fillRect(125, 1, 62, 20);
+            ctx.fillStyle = '#069';
+            ctx.fillText(text, 2, 15);
+            ctx.fillStyle = 'rgba(102, 204, 0, 0.7)';
+            ctx.fillText(text, 4, 17);
+            
+            return canvas.toDataURL();
+        } catch (e) {
+            return '';
+        }
+    }
+    
+    /**
+     * WebGL指纹
+     */
+    function getWebGLFingerprint() {
+        try {
+            var canvas = document.createElement('canvas');
+            var gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+            
+            if (!gl) {
+                return '';
+            }
+            
+            var debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+            if (!debugInfo) {
+                return '';
+            }
+            
+            var vendor = gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL);
+            var renderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
+            
+            return vendor + '~' + renderer;
+        } catch (e) {
+            return '';
+        }
+    }
+    
+    /**
+     * 音频指纹
+     */
+    function getAudioFingerprint() {
+        try {
+            var audioContext = window.AudioContext || window.webkitAudioContext;
+            if (!audioContext) {
+                return '';
+            }
+            
+            var context = new audioContext();
+            var oscillator = context.createOscillator();
+            var analyser = context.createAnalyser();
+            var gainNode = context.createGain();
+            var scriptProcessor = context.createScriptProcessor(4096, 1, 1);
+            
+            gainNode.gain.value = 0;
+            oscillator.connect(analyser);
+            analyser.connect(scriptProcessor);
+            scriptProcessor.connect(gainNode);
+            gainNode.connect(context.destination);
+            
+            oscillator.start(0);
+            
+            var fingerprint = analyser.frequencyBinCount + '_' + 
+                            analyser.fftSize + '_' + 
+                            context.sampleRate;
+            
+            oscillator.stop();
+            
+            return fingerprint;
+        } catch (e) {
+            return '';
+        }
+    }
+    
+    /**
+     * 获取设备型号(从 User Agent 中提取)
+     */
+    function getDeviceModel() {
+        var ua = navigator.userAgent;
+        var model = '未知设备';
+        
+        // iPhone 识别
+        if (/iPhone/.test(ua)) {
+            var iphoneMatch = ua.match(/iPhone\s*([0-9,]+)/);
+            if (iphoneMatch) {
+                model = 'iPhone ' + iphoneMatch[1].replace(',', '.');
+            } else if (/iPhone/.test(ua)) {
+                // 通过屏幕分辨率和像素比推断 iPhone 型号
+                var width = screen.width;
+                var height = screen.height;
+                var ratio = window.devicePixelRatio || 1;
+                
+                if (width === 414 && height === 896 && ratio === 2) model = 'iPhone 11/XR';
+                else if (width === 414 && height === 896 && ratio === 3) model = 'iPhone 11 Pro Max/XS Max';
+                else if (width === 375 && height === 812 && ratio === 3) model = 'iPhone 11 Pro/X/XS';
+                else if (width === 390 && height === 844 && ratio === 3) model = 'iPhone 12/12 Pro/13/13 Pro/14';
+                else if (width === 428 && height === 926 && ratio === 3) model = 'iPhone 12 Pro Max/13 Pro Max/14 Plus';
+                else if (width === 393 && height === 852 && ratio === 3) model = 'iPhone 14 Pro/15/15 Pro';
+                else if (width === 430 && height === 932 && ratio === 3) model = 'iPhone 14 Pro Max/15 Plus/15 Pro Max';
+                else if (width === 375 && height === 667 && ratio === 2) model = 'iPhone 6/7/8/SE2';
+                else if (width === 414 && height === 736 && ratio === 3) model = 'iPhone 6/7/8 Plus';
+                else model = 'iPhone';
+            }
+        }
+        // iPad 识别
+        else if (/iPad/.test(ua)) {
+            model = 'iPad';
+            if (/iPad Pro/.test(ua)) model = 'iPad Pro';
+            else if (/iPad Air/.test(ua)) model = 'iPad Air';
+            else if (/iPad Mini/.test(ua)) model = 'iPad Mini';
+        }
+        // Android 设备识别
+        else if (/Android/.test(ua)) {
+            // 尝试提取品牌和型号
+            var androidMatch = ua.match(/Android[\s\/]+([\d.]+);[\s]*([^;)]+)/);
+            if (androidMatch && androidMatch[2]) {
+                var deviceName = androidMatch[2].trim();
+                
+                // 常见品牌识别
+                if (/HUAWEI|HW-|Honor/i.test(deviceName)) {
+                    model = deviceName.replace(/HUAWEI\s*/i, '华为 ').replace(/HW-/i, '华为 ').replace(/Honor/i, '荣耀');
+                } else if (/Xiaomi|MI\s|Redmi/i.test(deviceName)) {
+                    model = deviceName.replace(/Xiaomi/i, '小米').replace(/MI\s/i, '小米').replace(/Redmi/i, '红米');
+                } else if (/OPPO/i.test(deviceName)) {
+                    model = 'OPPO ' + deviceName.replace(/OPPO\s*/i, '');
+                } else if (/vivo/i.test(deviceName)) {
+                    model = 'vivo ' + deviceName.replace(/vivo\s*/i, '');
+                } else if (/ONEPLUS/i.test(deviceName)) {
+                    model = '一加 ' + deviceName.replace(/ONEPLUS\s*/i, '');
+                } else if (/Samsung|SM-|GT-/i.test(deviceName)) {
+                    model = '三星 ' + deviceName.replace(/Samsung\s*/i, '');
+                } else if (/Meizu/i.test(deviceName)) {
+                    model = '魅族 ' + deviceName.replace(/Meizu\s*/i, '');
+                } else if (/Lenovo/i.test(deviceName)) {
+                    model = '联想 ' + deviceName.replace(/Lenovo\s*/i, '');
+                } else if (/ZTE/i.test(deviceName)) {
+                    model = '中兴 ' + deviceName.replace(/ZTE\s*/i, '');
+                } else if (/Realme/i.test(deviceName)) {
+                    model = 'Realme ' + deviceName.replace(/Realme\s*/i, '');
+                } else {
+                    model = deviceName;
+                }
+            } else {
+                model = 'Android设备';
+            }
+        }
+        // Windows Phone
+        else if (/Windows Phone/.test(ua)) {
+            model = 'Windows Phone';
+        }
+        // 桌面端
+        else if (/Windows NT/.test(ua)) {
+            var winMatch = ua.match(/Windows NT ([\d.]+)/);
+            if (winMatch) {
+                var version = parseFloat(winMatch[1]);
+                if (version >= 10.0) model = 'Windows 10/11';
+                else if (version >= 6.3) model = 'Windows 8.1';
+                else if (version >= 6.2) model = 'Windows 8';
+                else if (version >= 6.1) model = 'Windows 7';
+                else model = 'Windows';
+            } else {
+                model = 'Windows';
+            }
+        }
+        else if (/Macintosh|Mac OS X/.test(ua)) {
+            model = 'Mac';
+        }
+        else if (/Linux/.test(ua)) {
+            model = 'Linux';
+        }
+        
+        return model;
+    }
+    
+    /**
+     * 获取设备品牌
+     */
+    function getDeviceBrand() {
+        var ua = navigator.userAgent;
+        var brand = '未知';
+        
+        if (/iPhone|iPad|iPod/.test(ua)) brand = 'Apple';
+        else if (/HUAWEI|Honor/.test(ua)) brand = '华为';
+        else if (/Xiaomi|MI\s|Redmi/.test(ua)) brand = '小米';
+        else if (/OPPO/.test(ua)) brand = 'OPPO';
+        else if (/vivo/.test(ua)) brand = 'vivo';
+        else if (/ONEPLUS/.test(ua)) brand = '一加';
+        else if (/Samsung/.test(ua)) brand = '三星';
+        else if (/Meizu/.test(ua)) brand = '魅族';
+        else if (/Lenovo/.test(ua)) brand = '联想';
+        else if (/ZTE/.test(ua)) brand = '中兴';
+        else if (/Realme/.test(ua)) brand = 'Realme';
+        else if (/Windows/.test(ua)) brand = 'Microsoft';
+        else if (/Macintosh/.test(ua)) brand = 'Apple';
+        else if (/Android/.test(ua)) brand = 'Android';
+        
+        return brand;
+    }
+    
+    /**
+     * 获取设备类型
+     */
+    function getDeviceType() {
+        var ua = navigator.userAgent;
+        
+        if (/iPhone|iPod/.test(ua)) return '手机';
+        if (/iPad/.test(ua)) return '平板';
+        if (/Android/.test(ua)) {
+            if (/Mobile/.test(ua)) return '手机';
+            return '平板';
+        }
+        if (/Windows Phone/.test(ua)) return '手机';
+        
+        return '桌面';
+    }
+    
+    /**
+     * 检测已安装字体
+     */
+    function getInstalledFonts() {
+        var baseFonts = ['monospace', 'sans-serif', 'serif'];
+        var testFonts = [
+            'Arial', 'Verdana', 'Courier New', 'Times New Roman', 
+            'Georgia', 'Palatino', 'Garamond', 'Bookman', 'Comic Sans MS',
+            'Trebuchet MS', 'Impact', 'Lucida Sans', 'Tahoma', 'Helvetica',
+            'Microsoft YaHei', 'SimSun', 'SimHei', 'KaiTi', 'FangSong'
+        ];
+        
+        var canvas = document.createElement('canvas');
+        var ctx = canvas.getContext('2d');
+        var text = 'mmmmmmmmmmlli';
+        var baseFontWidths = {};
+        var installedFonts = [];
+        
+        // 测量基础字体宽度
+        ctx.font = '72px monospace';
+        baseFontWidths.monospace = ctx.measureText(text).width;
+        ctx.font = '72px sans-serif';
+        baseFontWidths['sans-serif'] = ctx.measureText(text).width;
+        ctx.font = '72px serif';
+        baseFontWidths.serif = ctx.measureText(text).width;
+        
+        // 检测每个字体
+        for (var i = 0; i < testFonts.length; i++) {
+            var detected = false;
+            for (var j = 0; j < baseFonts.length; j++) {
+                ctx.font = '72px "' + testFonts[i] + '", ' + baseFonts[j];
+                var width = ctx.measureText(text).width;
+                if (width !== baseFontWidths[baseFonts[j]]) {
+                    detected = true;
+                    break;
+                }
+            }
+            if (detected) {
+                installedFonts.push(testFonts[i]);
+            }
+        }
+        
+        return installedFonts.join(',');
+    }
+    
+    /**
+     * 获取插件信息
+     */
+    function getPlugins() {
+        if (!navigator.plugins || navigator.plugins.length === 0) {
+            return '';
+        }
+        
+        var plugins = [];
+        for (var i = 0; i < navigator.plugins.length; i++) {
+            plugins.push(navigator.plugins[i].name);
+        }
+        return plugins.sort().join(',');
+    }
+    
+    /**
+     * 获取触摸支持信息
+     */
+    function getTouchSupport() {
+        var maxTouchPoints = 0;
+        var touchEvent = false;
+        
+        if (typeof navigator.maxTouchPoints !== 'undefined') {
+            maxTouchPoints = navigator.maxTouchPoints;
+        } else if (typeof navigator.msMaxTouchPoints !== 'undefined') {
+            maxTouchPoints = navigator.msMaxTouchPoints;
+        }
+        
+        try {
+            document.createEvent('TouchEvent');
+            touchEvent = true;
+        } catch (e) {
+            touchEvent = false;
+        }
+        
+        var touchStart = 'ontouchstart' in window;
+        
+        return maxTouchPoints + ',' + touchEvent + ',' + touchStart;
+    }
+    
+    /**
+     * 检查localStorage可用性
+     */
+    function isLocalStorageAvailable() {
+        try {
+            var test = '__test__';
+            localStorage.setItem(test, test);
+            localStorage.removeItem(test);
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
+    
+    /**
+     * 检查sessionStorage可用性
+     */
+    function isSessionStorageAvailable() {
+        try {
+            var test = '__test__';
+            sessionStorage.setItem(test, test);
+            sessionStorage.removeItem(test);
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
+    
+    /**
+     * 获取媒体设备信息
+     */
+    function getMediaDevices() {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
+            return '';
+        }
+        
+        var devices = [];
+        navigator.mediaDevices.enumerateDevices().then(function(deviceInfos) {
+            for (var i = 0; i < deviceInfos.length; i++) {
+                var deviceInfo = deviceInfos[i];
+                devices.push(deviceInfo.kind);
+            }
+        }).catch(function() {
+            // 忽略错误
+        });
+        
+        return devices.join(',');
+    }
+    
+    /**
+     * 简单的哈希函数
+     */
+    function simpleHash(str) {
+        var hash = 0;
+        if (str.length === 0) return hash.toString(16);
+        
+        for (var i = 0; i < str.length; i++) {
+            var char = str.charCodeAt(i);
+            hash = ((hash << 5) - hash) + char;
+            hash = hash & hash;
+        }
+        
+        return Math.abs(hash).toString(16);
+    }
+    
+    /**
+     * 生成设备指纹哈希
+     */
+    function generateFingerprint() {
+        var deviceInfo = collectDeviceInfo();
+        var fingerprintString = JSON.stringify(deviceInfo);
+        
+        // 使用多次哈希增加唯一性
+        var hash1 = simpleHash(fingerprintString);
+        var hash2 = simpleHash(hash1 + fingerprintString.length);
+        var hash3 = simpleHash(hash2 + navigator.userAgent);
+        
+        // 组合生成32位哈希
+        var finalHash = (hash1 + hash2 + hash3).substring(0, 32);
+        
+        return finalHash;
+    }
+    
+    /**
+     * 获取设备指纹(带缓存)
+     */
+    function getFingerprint(callback) {
+        try {
+            // 检查是否已缓存
+            var cached = localStorage.getItem('device_fingerprint');
+            if (cached) {
+                if (callback) callback(cached);
+                return cached;
+            }
+            
+            // 生成新的指纹
+            var fingerprint = generateFingerprint();
+            
+            // 缓存指纹
+            try {
+                localStorage.setItem('device_fingerprint', fingerprint);
+            } catch (e) {
+                // localStorage不可用,忽略
+            }
+            
+            if (callback) callback(fingerprint);
+            return fingerprint;
+        } catch (e) {
+            var fallbackHash = simpleHash(navigator.userAgent + screen.width + screen.height);
+            if (callback) callback(fallbackHash);
+            return fallbackHash;
+        }
+    }
+    
+    // 导出公共API
+    return {
+        get: getFingerprint,
+        generate: generateFingerprint,
+        collect: collectDeviceInfo,
+        getDeviceModel: getDeviceModel,
+        getDeviceBrand: getDeviceBrand,
+        getDeviceType: getDeviceType
+    };
+})();
